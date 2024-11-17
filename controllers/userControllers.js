@@ -1,6 +1,7 @@
-import User from "../models/User";
-import Assignment from "../models/Assignment";
+import User from "../models/User.js";
+import Assignment from "../models/Assignment.js";
 import bcrypt, { hash } from "bcrypt";
+import { generateToken } from "../utils/jwt.js";
 
 
 //Register User
@@ -41,7 +42,9 @@ const loginUser = async(req,res)=>{
         const isPasswordCorrect = await bcrypt.compare(password,user.password);
         if(!isPasswordCorrect) res.status(400).json({message: "Invalid email or password"});
 
-        res.status(200).json({message:"Login successful", userID:user._id});
+        const token = generateToken(user._id);
+
+        res.status(200).json({message:"Login successful", token});
     }catch(err){
         res.status(500).json(err);
     }
@@ -55,7 +58,7 @@ const uploadAssignment = async(req,res)=>{
         if(!task || !adminId) res.status(400).json({message: "Both task and adminId are required"});
 
         const assignment = await Assignment.create({
-            userId: req.body.id,
+            userId: req.user.id,
             task: task,
             adminId: adminId
         });

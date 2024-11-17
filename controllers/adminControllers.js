@@ -1,6 +1,7 @@
-import User from "../models/User";
-import Assignment from "../models/Assignment";
+import User from "../models/User.js";
+import Assignment from "../models/Assignment.js";
 import bcrypt, { hash } from "bcrypt";
+import { generateToken } from "../utils/jwt.js";
 
 
 //register admin
@@ -40,7 +41,12 @@ const loginAdmin = async(req,res)=>{
         const isPasswordCorrect = await bcrypt.compare(password,admin.password);
         if(!isPasswordCorrect) res.status(400).json({message: "Invalid email or password"});
 
-        res.status(200).json({message:"Login successful", adminID:admin._id});
+        const token = generateToken(admin._id);
+
+        res.status(200).json({
+            message: "Login successful",
+            token,
+        });
     }catch(err){
         res.status(500).json(err);
     }
@@ -49,7 +55,9 @@ const loginAdmin = async(req,res)=>{
 
 //View assignments tagged to the admin
 const getAssignments = async(req,res)=>{
-    req.user = {id:"Admin _id"};
+
+    // req.user = {id:"Admin _id"}; just for testing without JWT
+
     try{
         const assignments = await Assignment.find({adminId: req.user.id}).populate("userID","username email");
         res.status(200).json(assignments);

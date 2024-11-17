@@ -1,7 +1,8 @@
 import { Router } from "express";
 import {registerAdmin,loginAdmin,getAssignments,acceptAssignment,rejectAssignment} from "../controllers/adminControllers.js"
+import protect from "../middleware/authMiddleware.js"
 
-const router = express();
+const router = Router();
 
 //Admin registration
 router.post('/register',registerAdmin);
@@ -10,13 +11,13 @@ router.post('/register',registerAdmin);
 router.post('/login',loginAdmin);
 
 //View assignments tagged to admin
-router.get('/assignments',getAssignments)
+router.get('/assignments',protect, getAssignments)
 
 //Accept assignment
-router.post('/assignments/:id/accept',acceptAssignment)
+router.post('/assignments/:id/accept',protect, acceptAssignment)
 
 //Reject assignment
-router.post('/assignments/:id/reject',rejectAssignment)
+router.post('/assignments/:id/reject',protect, rejectAssignment)
 
 
 export default router;

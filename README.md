@@ -86,8 +86,6 @@ npm start
 
 Here’s a list of the available API endpoints:
 
----
-
 ### **User Endpoints** (`/api/users`)
 
 - **POST** `/register`: Register a new user  
